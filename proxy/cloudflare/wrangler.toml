@@ -1,0 +1,8 @@
+name = "binance-proxy"
+main = "index.js"
+compatibility_date = "2025-11-15"
+account_id = "87950afe1868fd206de9c7dc65fbca3c"
+
+[vars]
+BINANCE_UPSTREAM = "https://fapi.binance.com"
+BINANCE_PROXY_KEY = "d14cfbe545ef7e02c2ee1325aeb49105"

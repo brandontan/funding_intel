@@ -1,0 +1,8 @@
+name = "htx-proxy"
+main = "index.js"
+compatibility_date = "2025-11-15"
+account_id = "87950afe1868fd206de9c7dc65fbca3c"
+
+[vars]
+HTX_UPSTREAM = "https://api.hbdm.com"
+HTX_PROXY_KEY = "24350b17f18864bcdbacb49edacc42cb"

@@ -1,8 +1,37 @@
 import { fetchWithRetry } from '../utils/http.mjs'
+import { DEFAULT_HEADERS } from './shared.mjs'
 
 const symbolMap = {
   BTCUSDT: 'BTC-USDT',
   ETHUSDT: 'ETH-USDT',
+}
+
+const proxyBase = process.env.HTX_PROXY_URL?.replace(/\/$/, '')
+const proxyKey = process.env.HTX_PROXY_KEY
+
+function buildUrl(path, params = {}) {
+  const base = proxyBase ?? 'https://api.hbdm.com'
+  const url = new URL(path, base)
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      url.searchParams.set(key, value)
+    }
+  })
+  return url
+}
+
+async function fetchSpotPrice(symbol) {
+  try {
+    const spotSymbol = symbol.replace('-', '').toLowerCase()
+    const url = buildUrl('/market/detail/merged', { symbol: spotSymbol })
+    const headers = { ...DEFAULT_HEADERS }
+    if (proxyBase && proxyKey) headers['x-proxy-key'] = proxyKey
+    const res = await fetchWithRetry(url, { headers })
+    const json = await res.json()
+    return Number(json.tick?.close ?? json.tick?.lastPrice ?? 0)
+  } catch {
+    return 0
+  }
 }
 
 export async function fetchHuobiRates(targetPairs = []) {
@@ -10,21 +39,28 @@ export async function fetchHuobiRates(targetPairs = []) {
   const records = []
   for (const pair of pairs) {
     const contract = symbolMap[pair] ?? `${pair.replace('USDT', '')}-USDT`
-    const url = new URL('https://api.hbdm.com/linear-swap-api/v1/swap_funding_rate')
-    url.searchParams.set('contract_code', contract)
-    const res = await fetchWithRetry(url, { headers: { 'User-Agent': 'FundingIntelBot/0.1' } })
-    const json = await res.json()
-    if (!json.data || json.data.err_code) continue
-    const rate = Number(json.data.funding_rate)
-    if (Number.isNaN(rate)) continue
-    records.push({
-      exchange: 'htx',
-      pair,
-      fundingRate: rate,
-      markPrice: Number(json.data.index_price) ?? 0,
-      nextFundingTime: json.data.next_funding_time ? new Date(Number(json.data.next_funding_time)).toISOString() : null,
-      fetchedAt: new Date().toISOString(),
-    })
+    const url = buildUrl('/linear-swap-api/v1/swap_funding_rate', { contract_code: contract })
+    let data
+    try {
+      const [fundingRes, price] = await Promise.all([
+        fetchWithRetry(url, { headers: { ...DEFAULT_HEADERS, ...(proxyBase && proxyKey ? { 'x-proxy-key': proxyKey } : {}) } }).then((res) => res.json()),
+        fetchSpotPrice(contract),
+      ])
+      data = fundingRes.data
+      if (!data) continue
+      const rate = Number(data.funding_rate ?? 0)
+      if (Number.isNaN(rate)) continue
+      records.push({
+        exchange: 'htx',
+        pair,
+        fundingRate: rate,
+        markPrice: price,
+        nextFundingTime: data.funding_time ? new Date(Number(data.funding_time)).toISOString() : null,
+        fetchedAt: new Date().toISOString(),
+      })
+    } catch (error) {
+      console.error('HTX fetch failed', error)
+    }
   }
   return records
 }

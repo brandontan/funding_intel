@@ -7,7 +7,7 @@ const symbolMap = {
 
 export async function fetchDydxRates(targetPairs = []) {
   const pairs = targetPairs.length ? targetPairs : ['BTCUSDT', 'ETHUSDT']
-  const url = 'https://api.dydx.trade/v4/markets?limit=500'
+  const url = 'https://indexer.dydx.trade/v4/perpetualMarkets'
   const res = await fetchWithRetry(url, { headers: { 'User-Agent': 'FundingIntelBot/0.1' } })
   const json = await res.json()
   const markets = json.markets ?? {}
@@ -16,7 +16,7 @@ export async function fetchDydxRates(targetPairs = []) {
     const marketName = symbolMap[pair] ?? pair.replace('USDT', '-USD')
     const info = markets[marketName]
     if (!info) return []
-    const rate = Number(info.nextFundingRate ?? info.fundingRate ?? 0)
+    const rate = Number(info.nextFundingRate ?? info.lastFundingRate ?? 0)
     if (Number.isNaN(rate)) return []
     return [{
       exchange: 'dydx',
