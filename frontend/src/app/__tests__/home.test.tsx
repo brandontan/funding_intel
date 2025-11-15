@@ -2,8 +2,9 @@ import { render, screen } from '@testing-library/react';
 import Home from '../page';
 
 describe('Home', () => {
-  it('renders the onboarding headline placeholder', () => {
+  it('renders hero with funding stats', () => {
     render(<Home />);
-    expect(screen.getByRole('heading', { name: /to get started/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /funding intelligence/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /open strategy/i })).toBeInTheDocument();
   });
 });
