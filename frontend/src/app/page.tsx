@@ -12,8 +12,9 @@ import { prioritizeOpportunities } from '@/lib/prioritizeOpportunities'
 
 export default async function Page() {
   const cookieStore = cookies()
-  const storedUserId = cookieStore.get('fi_user_id')?.value
-  const onboardingComplete = cookieStore.get('fi_onboarding_complete')?.value === 'true'
+  const getCookie = typeof cookieStore.get === 'function' ? cookieStore.get.bind(cookieStore) : () => undefined
+  const storedUserId = getCookie('fi_user_id')?.value
+  const onboardingComplete = getCookie('fi_onboarding_complete')?.value === 'true'
   const userSettings = storedUserId ? await getUserSettings(storedUserId) : null
   const showOnboarding = !onboardingComplete || !userSettings
 
