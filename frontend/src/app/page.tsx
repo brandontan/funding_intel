@@ -2,8 +2,7 @@ import { FundingHero } from '@/components/funding-hero'
 import { AssetCards } from '@/components/asset-cards'
 import { OpportunityTable } from '@/components/opportunity-table'
 import { ProfitCalculator } from '@/components/profit-calculator'
-import { Button } from '@/components/ui/button'
-import { Bell } from 'lucide-react'
+import { AlertComposer } from '@/components/alert-composer'
 import { getOpportunities } from '@/lib/getOpportunities'
 
 export default async function Page() {
@@ -48,10 +47,7 @@ export default async function Page() {
               Funding Intelligence
             </h1>
           </div>
-          <Button variant="outline" size="sm" className="border-primary/30 hover:bg-primary/10">
-            <Bell className="w-4 h-4 mr-2" />
-            Create Alert
-          </Button>
+          <AlertComposer opportunities={opportunities} />
         </div>
       </header>
 
