@@ -76,6 +76,7 @@ export function DeepAnalytics({ data }: Props) {
             {data.heatmap.map((cell) => (
               <div
                 key={`${cell.exchange}-${cell.pair}`}
+                data-heatmap-card
                 className="rounded-xl border border-border/30 p-4 flex flex-col gap-2 bg-gradient-to-br from-primary/5 to-background"
               >
                 <div className="text-xs uppercase tracking-wide text-muted-foreground">{cell.exchange}</div>
