@@ -50,7 +50,7 @@ export function FundingHero({
               </p>
             </div>
             <div className="pt-2">
-              <p className="text-2xl font-semibold bg-gradient-to-r from-success to-cyan-400 bg-clip-text text-transparent">
+              <p data-testid="profit-hero" className="text-2xl font-semibold bg-gradient-to-r from-success to-cyan-400 bg-clip-text text-transparent">
                 ${profitPer8h.toFixed(2)}
               </p>
               <p className="text-sm text-muted-foreground">

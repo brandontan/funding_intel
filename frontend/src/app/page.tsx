@@ -7,14 +7,15 @@ import { AlertComposer } from '@/components/alert-composer'
 import { OnboardingFlow } from '@/components/onboarding-flow'
 import { getOpportunities } from '@/lib/getOpportunities'
 import { getUserSettings } from '@/lib/getUserSettings'
+import { getFundingAnalytics } from '@/lib/getFundingAnalytics'
 import { DEFAULT_EXCHANGE_VALUES } from '@/lib/exchanges'
 import { prioritizeOpportunities } from '@/lib/prioritizeOpportunities'
+import { DeepAnalytics } from '@/components/deep-analytics'
 
 export default async function Page() {
-  const cookieStore = cookies()
-  const getCookie = typeof cookieStore.get === 'function' ? cookieStore.get.bind(cookieStore) : () => undefined
-  const storedUserId = getCookie('fi_user_id')?.value
-  const onboardingComplete = getCookie('fi_onboarding_complete')?.value === 'true'
+  const cookieStore = await cookies()
+  const storedUserId = cookieStore.get('fi_user_id')?.value
+  const onboardingComplete = cookieStore.get('fi_onboarding_complete')?.value === 'true'
   const userSettings = storedUserId ? await getUserSettings(storedUserId) : null
   const showOnboarding = !onboardingComplete || !userSettings
 
@@ -23,6 +24,7 @@ export default async function Page() {
   const preferredExchanges = userSettings?.preferredExchanges ?? DEFAULT_EXCHANGE_VALUES
 
   const opportunities = await getOpportunities()
+  const analytics = await getFundingAnalytics()
   const prioritized = prioritizeOpportunities(opportunities, preferredExchanges)
   const hero = prioritized[0]
   const effectiveCapital = capital * leverage
@@ -84,6 +86,7 @@ export default async function Page() {
             <FundingHero {...heroData} />
             <AssetCards items={assetItems} capital={capital} leverage={leverage} />
             <OpportunityTable data={opportunities} capital={capital} leverage={leverage} />
+            <DeepAnalytics data={analytics} />
           </div>
 
           {/* Right Column - Sticky Calculator */}
