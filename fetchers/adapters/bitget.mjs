@@ -1,30 +1,30 @@
 import { fetchWithRetry } from '../utils/http.mjs'
 
 const symbolMap = {
-  BTCUSDT: { productType: 'umcbl', symbol: 'BTCUSDT_UMCBL' },
-  ETHUSDT: { productType: 'umcbl', symbol: 'ETHUSDT_UMCBL' },
+  BTCUSDT: 'BTCUSDT_UMCBL',
+  ETHUSDT: 'ETHUSDT_UMCBL',
 }
 
 export async function fetchBitgetRates(targetPairs = []) {
   const pairs = targetPairs.length ? targetPairs : ['BTCUSDT', 'ETHUSDT']
   const records = []
   for (const pair of pairs) {
-    const { productType, symbol } = symbolMap[pair] ?? { productType: 'umcbl', symbol: `${pair}_UMCBL` }
-    const url = new URL('https://api.bitget.com/api/mix/v1/market/fundingRate')
-    url.searchParams.set('productType', productType)
+    const symbol = symbolMap[pair] ?? `${pair}_UMCBL`
+    const url = new URL('https://api.bitget.com/api/mix/v1/market/historyFundRate')
     url.searchParams.set('symbol', symbol)
+    url.searchParams.set('pageSize', '1')
     const res = await fetchWithRetry(url, { headers: { 'User-Agent': 'FundingIntelBot/0.1' } })
     const json = await res.json()
-    const data = json.data
-    if (!data) continue
-    const rate = Number(data.fundingRate)
+    if (!json.data || json.data.length === 0) continue
+    const entry = json.data[0]
+    const rate = Number(entry.fundingRate)
     if (Number.isNaN(rate)) continue
     records.push({
       exchange: 'bitget',
       pair,
       fundingRate: rate,
-      markPrice: Number(data.indexPrice) ?? 0,
-      nextFundingTime: data.settleTime ? new Date(Number(data.settleTime)).toISOString() : null,
+      markPrice: Number(entry.avgPrice) ?? 0,
+      nextFundingTime: entry.fundingTime ? new Date(Number(entry.fundingTime)).toISOString() : null,
       fetchedAt: new Date().toISOString(),
     })
   }
