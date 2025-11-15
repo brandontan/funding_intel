@@ -22,8 +22,19 @@ Consult `.codex-os/specs/2025-11-15-funding-intelligence-mvp/` for detailed SRD,
   product/        ← mission, roadmap, stack, decisions
   standards/      ← tech + code style guidance for this repo
   specs/          ← dated MVP spec with SRD, tech-spec, tasks
+frontend/         ← Next.js 16 app (React 19, Tailwind 4, Vitest)
 README.md         ← high-level context + scope
 ```
+
+## Local Development
+```
+cd frontend
+npm install        # already run once, needed after clean clone
+npm run dev        # Next.js dev server on http://localhost:3000
+npm run lint       # ESLint (Next config)
+npm run test       # Vitest + Testing Library
+```
+Copy `frontend/.env.example` → `.env.local` and fill Supabase/Resend/Telegram/PostHog/LangGraph keys before wiring APIs.
 
 ## Next Steps
 - Implement Task 1 from the spec: Supabase schema + ingestion fetchers.

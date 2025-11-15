@@ -1,0 +1,20 @@
+# Node / Next artifacts
+node_modules/
+frontend/.next/
+frontend/out/
+
+# Env + secrets
+.env
+*.env
+frontend/.env.local
+frontend/.env
+
+# Logs / coverage
+*.log
+frontend/coverage/
+
+# Tooling
+.vercel/
+.DS_Store
+.idea/
+.vscode/
