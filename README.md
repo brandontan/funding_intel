@@ -36,6 +36,20 @@ npm run test       # Vitest + Testing Library
 ```
 Copy `frontend/.env.example` → `.env.local` and fill Supabase/Resend/Telegram/PostHog/LangGraph keys before wiring APIs.
 
+### Data Fetchers (Task 1 groundwork)
+```
+cd fetchers
+cp .env.example .env
+# edit with SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY
+npm install        # already run once
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npm run ingest
+```
+`npm run ingest` hits Binance/Bybit/OKX public endpoints, normalizes BTC/ETH/SOL funding data, inserts rows into `funding_rates`, and logs metrics in Supabase.
+
+## Database setup
+- Run the SQL in `supabase/migrations/20251115120000_init.sql` via the Supabase SQL editor or CLI (`supabase db push`) to create enums, tables, triggers, and RLS policies.
+- Confirm `user_settings`, `funding_rates`, `opportunities`, `alerts`, and `ingestion_metrics` exist before running fetchers or UI code.
+
 ## Next Steps
 - Implement Task 1 from the spec: Supabase schema + ingestion fetchers.
 - Set up repo tooling (Next.js app, lint config) ahead of UI sprint.

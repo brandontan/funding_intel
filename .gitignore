@@ -1,5 +1,6 @@
 # Node / Next artifacts
 node_modules/
+fetchers/node_modules/
 frontend/.next/
 frontend/out/
 

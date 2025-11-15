@@ -1,0 +1,13 @@
+{
+  "name": "funding-fetchers",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "ingest": "node ingest.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.1",
+    "zod": "^3.23.8"
+  }
+}
