@@ -6,15 +6,17 @@ import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
 import { useState } from 'react'
 
-export function ProfitCalculator() {
+type Props = {
+  fundingRate: number // decimal (e.g., 0.00126)
+}
+
+export function ProfitCalculator({ fundingRate }: Props) {
   const [capital, setCapital] = useState(10000)
   const [leverage, setLeverage] = useState(1)
 
-  const fundingRate = 0.126 // 0.126%
   const periodsPerDay = 3 // 8h periods
-  
   const effectiveCapital = capital * leverage
-  const profitPer8h = effectiveCapital * (fundingRate / 100)
+  const profitPer8h = effectiveCapital * fundingRate
   const dailyProfit = profitPer8h * periodsPerDay
   const monthlyProfit = dailyProfit * 30
   const annualProfit = dailyProfit * 365
@@ -22,16 +24,13 @@ export function ProfitCalculator() {
 
   return (
     <Card className="shadow-2xl shadow-primary/20 bg-gradient-to-br from-card via-card to-primary/10 backdrop-blur-xl border-primary/30 relative overflow-hidden">
-      {/* Animated gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-cyan-500/10 animate-pulse-slow" />
-      
       <CardHeader className="relative z-10">
         <CardTitle className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
           Profit Calculator
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 relative z-10">
-        {/* Capital Input */}
         <div className="space-y-2">
           <Label htmlFor="capital">Capital (USD)</Label>
           <Input
@@ -42,8 +41,6 @@ export function ProfitCalculator() {
             className="text-lg font-semibold"
           />
         </div>
-
-        {/* Leverage Slider */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="leverage">Leverage</Label>
@@ -63,11 +60,8 @@ export function ProfitCalculator() {
             <span>10x</span>
           </div>
         </div>
-
-        {/* Summary */}
         <div className="rounded-lg bg-gradient-to-br from-primary/10 to-cyan-500/10 backdrop-blur-sm border border-primary/20 p-4 space-y-3">
           <h4 className="font-semibold text-sm">Estimated Profits</h4>
-          
           <div className="space-y-2">
             <div className="flex justify-between items-baseline">
               <span className="text-sm text-muted-foreground">Per 8h</span>
@@ -94,7 +88,6 @@ export function ProfitCalculator() {
               </span>
             </div>
           </div>
-
           <div className="pt-3 border-t border-border/50">
             <div className="flex justify-between items-baseline">
               <span className="text-sm font-semibold">APR</span>
@@ -104,9 +97,8 @@ export function ProfitCalculator() {
             </div>
           </div>
         </div>
-
         <p className="text-xs text-muted-foreground">
-          * Estimates based on current funding rate of {fundingRate}%. Actual profits may vary.
+          * Estimates based on current funding rate of {(fundingRate * 100).toFixed(3)}%. Actual profits may vary.
         </p>
       </CardContent>
     </Card>

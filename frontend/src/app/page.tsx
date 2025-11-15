@@ -4,10 +4,30 @@ import { OpportunityTable } from '@/components/opportunity-table'
 import { ProfitCalculator } from '@/components/profit-calculator'
 import { Button } from '@/components/ui/button'
 import { Bell } from 'lucide-react'
-import { fetchOpportunities } from '@/lib/data'
+import { getOpportunities } from '@/lib/getOpportunities'
 
 export default async function Page() {
-  const opportunities = await fetchOpportunities()
+  const opportunities = await getOpportunities()
+  const defaultCapital = 10000
+  const hero = opportunities[0]
+  const heroData = hero
+    ? {
+        pair: hero.pair,
+        exchange: hero.exchange,
+        fundingRate: hero.fundingRate,
+        profitPer8h: hero.fundingRate * defaultCapital,
+        capital: defaultCapital,
+        lastUpdated: new Date(hero.updatedAt).toLocaleTimeString(),
+      }
+    : {
+        pair: 'BTC/USDT-PERP',
+        exchange: 'Binance',
+        fundingRate: 0.00126,
+        profitPer8h: 0.00126 * defaultCapital,
+        capital: defaultCapital,
+        lastUpdated: 'moments ago',
+      }
+  const assetItems = opportunities.slice(0, 3)
   return (
     <div className="min-h-screen bg-background dark">
       {/* Animated gradient background */}
@@ -40,15 +60,15 @@ export default async function Page() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            <FundingHero />
-            <AssetCards />
+            <FundingHero {...heroData} />
+            <AssetCards items={assetItems} />
             <OpportunityTable data={opportunities} />
           </div>
 
           {/* Right Column - Sticky Calculator */}
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-6">
-              <ProfitCalculator />
+              <ProfitCalculator fundingRate={heroData.fundingRate} />
             </div>
           </div>
         </div>

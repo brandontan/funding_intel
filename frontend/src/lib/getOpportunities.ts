@@ -8,6 +8,10 @@ const EXCHANGE_DISPLAY: Record<string, string> = {
 }
 
 export async function getOpportunities(): Promise<Opportunity[]> {
+  if (!supabase) {
+    return []
+  }
+
   const { data, error } = await supabase
     .from('opportunities')
     .select('*')
