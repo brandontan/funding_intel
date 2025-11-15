@@ -82,7 +82,7 @@ export default async function Page() {
           <div className="lg:col-span-2 space-y-6">
             <FundingHero {...heroData} />
             <AssetCards items={assetItems} capital={capital} leverage={leverage} />
-            <OpportunityTable data={opportunities} />
+            <OpportunityTable data={opportunities} capital={capital} leverage={leverage} />
           </div>
 
           {/* Right Column - Sticky Calculator */}

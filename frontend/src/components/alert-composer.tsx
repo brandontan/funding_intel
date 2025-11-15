@@ -30,6 +30,23 @@ export function AlertComposer({ opportunities, defaultChannel = 'email' }: Props
     setChannel(defaultChannel)
   }, [defaultChannel])
 
+  useEffect(() => {
+    function handleOpen(event: Event) {
+      const customEvent = event as CustomEvent<{ pair?: string; exchange?: string }>
+      const nextPair = customEvent.detail?.pair
+      const nextExchange = customEvent.detail?.exchange
+      if (nextPair) {
+        setPair(nextPair)
+      }
+      if (nextExchange) {
+        setExchange(nextExchange)
+      }
+      setOpen(true)
+    }
+    window.addEventListener('fi-open-alert-composer', handleOpen as EventListener)
+    return () => window.removeEventListener('fi-open-alert-composer', handleOpen as EventListener)
+  }, [])
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setStatus('saving')
