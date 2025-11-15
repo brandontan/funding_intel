@@ -20,13 +20,17 @@ function buildUrl(path, params = {}) {
   return url
 }
 
+function headersWithKey() {
+  return proxyBase && proxyKey
+    ? { ...DEFAULT_HEADERS, 'x-proxy-key': proxyKey }
+    : DEFAULT_HEADERS
+}
+
 async function fetchSpotPrice(symbol) {
   try {
     const spotSymbol = symbol.replace('-', '').toLowerCase()
     const url = buildUrl('/market/detail/merged', { symbol: spotSymbol })
-    const headers = { ...DEFAULT_HEADERS }
-    if (proxyBase && proxyKey) headers['x-proxy-key'] = proxyKey
-    const res = await fetchWithRetry(url, { headers })
+    const res = await fetchWithRetry(url, { headers: headersWithKey() })
     const json = await res.json()
     return Number(json.tick?.close ?? json.tick?.lastPrice ?? 0)
   } catch {
@@ -40,13 +44,12 @@ export async function fetchHuobiRates(targetPairs = []) {
   for (const pair of pairs) {
     const contract = symbolMap[pair] ?? `${pair.replace('USDT', '')}-USDT`
     const url = buildUrl('/linear-swap-api/v1/swap_funding_rate', { contract_code: contract })
-    let data
     try {
       const [fundingRes, price] = await Promise.all([
-        fetchWithRetry(url, { headers: { ...DEFAULT_HEADERS, ...(proxyBase && proxyKey ? { 'x-proxy-key': proxyKey } : {}) } }).then((res) => res.json()),
+        fetchWithRetry(url, { headers: headersWithKey() }).then((res) => res.json()),
         fetchSpotPrice(contract),
       ])
-      data = fundingRes.data
+      const data = fundingRes.data
       if (!data) continue
       const rate = Number(data.funding_rate ?? 0)
       if (Number.isNaN(rate)) continue
