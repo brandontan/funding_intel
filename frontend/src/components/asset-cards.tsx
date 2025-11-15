@@ -1,3 +1,5 @@
+'use client'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
@@ -42,9 +44,7 @@ export function AssetCards() {
           key={asset.symbol} 
           className={`hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 bg-gradient-to-br ${asset.gradient} backdrop-blur-xl border-primary/20 relative overflow-hidden group`}
         >
-          {/* Hover glow effect */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/10 group-hover:to-cyan-500/10 transition-all duration-500" />
-          
           <CardHeader className="pb-3 relative z-10">
             <div className="flex items-start justify-between">
               <div>

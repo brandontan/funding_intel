@@ -4,8 +4,10 @@ import { OpportunityTable } from '@/components/opportunity-table'
 import { ProfitCalculator } from '@/components/profit-calculator'
 import { Button } from '@/components/ui/button'
 import { Bell } from 'lucide-react'
+import { fetchOpportunities } from '@/lib/data'
 
-export default function Page() {
+export default async function Page() {
+  const opportunities = await fetchOpportunities()
   return (
     <div className="min-h-screen bg-background dark">
       {/* Animated gradient background */}
@@ -40,7 +42,7 @@ export default function Page() {
           <div className="lg:col-span-2 space-y-6">
             <FundingHero />
             <AssetCards />
-            <OpportunityTable />
+            <OpportunityTable data={opportunities} />
           </div>
 
           {/* Right Column - Sticky Calculator */}
