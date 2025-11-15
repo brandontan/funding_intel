@@ -9,10 +9,19 @@ type HeroProps = {
   fundingRate: number
   profitPer8h: number
   capital: number
+  leverage: number
   lastUpdated: string
 }
 
-export function FundingHero({ pair, exchange, fundingRate, profitPer8h, capital, lastUpdated }: HeroProps) {
+export function FundingHero({
+  pair,
+  exchange,
+  fundingRate,
+  profitPer8h,
+  capital,
+  leverage,
+  lastUpdated,
+}: HeroProps) {
   return (
     <Card className="bg-gradient-to-br from-card via-card to-primary/10 border-primary/30 backdrop-blur-xl relative overflow-hidden shadow-2xl">
       {/* Liquid gradient overlay */}
@@ -45,7 +54,7 @@ export function FundingHero({ pair, exchange, fundingRate, profitPer8h, capital,
                 ${profitPer8h.toFixed(2)}
               </p>
               <p className="text-sm text-muted-foreground">
-                Profit per 8h on ${capital.toLocaleString()} capital
+                Profit per 8h on ${capital.toLocaleString()} capital · {leverage}x hedge
               </p>
             </div>
           </div>

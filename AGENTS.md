@@ -1,28 +1,26 @@
 # Repository Guidelines
 
 ## Start Here
-1. Read `.codex-os/product/mission.md` for vision, then scan `.codex-os/specs/2025-11-15-funding-intelligence-mvp/` (SRD, tech spec, tasks).
-2. Run `npm install && npm run dev` to verify the Next.js skeleton once it exists; today focus on spec + setup.
-3. Log progress in `HANDOFF-YYYY-MM-DD.md` before ending your session.
+1. Read `.codex-os/product/mission.md`, then the active spec in `.codex-os/specs/2025-11-15-funding-intelligence-mvp/`.
+2. Sync status with `HANDOFF-2025-11-15.md` and the Memory MCP note `mcp://memory/funding-intel/2025-11-15`. Update both before logging off.
+3. Follow `.codex-os/standards/*` for stack, code-style, and best-practice guardrails before touching code.
 
 ## Project Structure & Module Organization
-Use `.codex-os/` for product context, standards, and the dated MVP spec (`.codex-os/specs/2025-11-15-funding-intelligence-mvp/`). The application code will live under `app/` (Next.js 15) with shared helpers in `lib/`, UI components in `components/`, and hooks in `hooks/`. Keep Supabase adapters inside `lib/data/` and exchange fetchers in `lib/exchanges/`. Tests belong in `__tests__/` mirroring source paths, and public assets live in `public/`.
+`frontend/` contains the Next.js 16 app (app router, components, lib, hooks). `fetchers/` hosts the Node ingestion runner plus exchange adapters, while `supabase/` holds migrations and type-safe SQL. Cloudflare worker proxies live in `proxy/`. Product context sits in `.codex-os/`; daily coordination happens in `HANDOFF-YYYY-MM-DD.md`. Keep new assets in `frontend/public/` and colocate tests under `__tests__` mirrors.
 
 ## Build, Test, and Development Commands
-- `npm install` – install Node dependencies (Next.js, Supabase client, chart libs).
-- `npm run dev` – launch the Next.js dev server with hot reload for UI work.
-- `npm run test` – execute Vitest/Jest suites (risk scoring, alert logic, API helpers).
-- `npm run lint` – run ESLint + TypeScript checks; required before commits.
-When adding Supabase scripts, document their `package.json` entries (e.g., `npm run fetch:binance`).
+- `cd frontend && npm install` once, then `npm run dev` for UI work, `npm run build && npm run start` to confirm production output, `npm run lint`, and `npm run test` (Vitest + RTL).
+- `cd fetchers && npm install && npm run ingest` loads multi-exchange funding data into Supabase (requires `.env` with Supabase + proxy secrets).
+- `supabase db push` applies schema changes; `supabase gen types typescript --project-id <ref>` refreshes types when tables change.
 
 ## Coding Style & Naming Conventions
-Adhere to `.codex-os/standards/code-style.md` and language guides. Use TypeScript strict mode, 2-space indentation, and descriptive React component names (`FundingOpportunityDrawer`). Tailwind powers layout; abstract repeated styles into components. Normalize exchange payloads to `{ exchange, pair, fundingRate, markPrice, timestamp }`. Keep Markdown docs sentence case with wrapped lines around 100 chars.
+TypeScript strict mode, 2-space indentation, and Tailwind utility-first styling per `.codex-os/standards/code-style.md`. Name React components after intent (`FundingHero`, `OpportunityDrawer`). Shared data contracts follow `{exchange, pair, fundingRate, markPrice, spreadBps, collectedAt}`. Keep files snake-case inside fetchers (`bybit-client.mjs`) and kebab-case routes under Next.js. Document non-obvious logic with concise comments.
 
 ## Testing Guidelines
-Use Vitest/Jest for logic layers and Playwright or React Testing Library for UI snapshots sparingly. Mirror file names (`fundingRisk.test.ts`) and group fixtures under `__tests__/fixtures/`. Cover risk scoring math, alert triggering, Supabase adapters, and onboarding flows; aim for 80%+ statement coverage before release. Run `npm run test -- --watch` while iterating.
+Favor small Vitest units for profit math, risk scoring, and alert rules. Use Testing Library for onboarding and drawer behaviors; mock Supabase via generated types. Fetchers require fixture-driven tests that stub exchange payloads plus a live “smoke” run before release. Target 80% statement coverage and include regression tests for every spec task touching alerting, pricing, or onboarding flows.
 
 ## Commit & Pull Request Guidelines
-Follow `<area>: <what/why> (spec <id> / task <n>)` messages, e.g., `alerts: add WhatsApp channel (spec 2025-11-15 task 5)`. Keep commits small and reference the spec tasks. PRs should link to relevant spec sections, describe implementation + tests, attach screenshots for UI work, and note any schema changes or new env vars. Document architectural shifts in `.codex-os/product/decisions.md` before requesting review.
+Message format: `<area>: <change> (spec 2025-11-15 task X)`. Reference Supabase migration IDs or proxy changes inside the body, list commands run, and attach screenshots for UI. PRs must cite spec sections, describe QA (tests + manual ingestion run), and update `.codex-os/product/decisions.md` when architecture or data contracts move. Keep commits atomic and never mix schema + UI without explanation.
 
 ## Security & Configuration Tips
-Keep the repo read-only regarding exchanges: no API keys stored until automation work begins. Use environment variables (`.env.local`) for Supabase, SendGrid, Twilio, PostHog; never commit secrets. Surface API health metrics in both Supabase logging and UI trust cues per the spec.
+No secrets in git: rely on `.env.local`, `.env.fetchers`, and Supabase config for anon/service keys plus proxy tokens (`BINANCE_PROXY_URL`, etc.). When touching ingestion, log rate-limit metadata and validation checks so we can justify the $99/mo pitch with trustworthy data. Mention new env vars in README and verify Auditor scans before merging.

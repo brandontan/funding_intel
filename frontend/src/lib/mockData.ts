@@ -2,6 +2,7 @@ export type Opportunity = {
   id: string;
   pair: string;
   exchange: 'Binance' | 'Bybit' | 'OKX';
+  exchangeKey: 'binance' | 'bybit' | 'okx';
   fundingRate: number;
   profitPer8h: number;
   apy: number;
@@ -57,6 +58,7 @@ export const mockOpportunities: Opportunity[] = [
     id: 'btc-binance',
     pair: 'BTC/USDT',
     exchange: 'Binance',
+    exchangeKey: 'binance',
     fundingRate: 0.00126,
     profitPer8h: 37.8,
     apy: 0.84,
@@ -69,6 +71,7 @@ export const mockOpportunities: Opportunity[] = [
     id: 'eth-bybit',
     pair: 'ETH/USDT',
     exchange: 'Bybit',
+    exchangeKey: 'bybit',
     fundingRate: 0.0009,
     profitPer8h: 27.0,
     apy: 0.62,
@@ -81,6 +84,7 @@ export const mockOpportunities: Opportunity[] = [
     id: 'sol-okx',
     pair: 'SOL/USDT',
     exchange: 'OKX',
+    exchangeKey: 'okx',
     fundingRate: 0.0015,
     profitPer8h: 45.0,
     apy: 0.97,

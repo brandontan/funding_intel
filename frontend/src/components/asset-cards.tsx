@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import type { Opportunity } from '@/types/opportunity'
+import type { Opportunity } from '@/types'
 
 const RISK_LABEL: Record<string, string> = {
   A: 'Low',
@@ -12,12 +12,16 @@ const RISK_LABEL: Record<string, string> = {
 
 type Props = {
   items: Opportunity[]
+  capital: number
+  leverage: number
 }
 
-export function AssetCards({ items }: Props) {
+export function AssetCards({ items, capital, leverage }: Props) {
   if (!items.length) {
     return null
   }
+
+  const effectiveCapital = capital * leverage
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -48,7 +52,7 @@ export function AssetCards({ items }: Props) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-lg font-semibold bg-gradient-to-r from-success to-cyan-400 bg-clip-text text-transparent">
-                  ${((asset.fundingRate * 3) * 10000).toFixed(2)}
+                  ${((asset.fundingRate * effectiveCapital) * 3).toFixed(2)}
                 </p>
                 <p className="text-xs text-muted-foreground">Daily profit</p>
               </div>

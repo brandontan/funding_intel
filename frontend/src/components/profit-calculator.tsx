@@ -4,15 +4,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type Props = {
   fundingRate: number // decimal (e.g., 0.00126)
+  initialCapital: number
+  initialLeverage: number
 }
 
-export function ProfitCalculator({ fundingRate }: Props) {
-  const [capital, setCapital] = useState(10000)
-  const [leverage, setLeverage] = useState(1)
+export function ProfitCalculator({ fundingRate, initialCapital, initialLeverage }: Props) {
+  const [capital, setCapital] = useState(() => initialCapital)
+  const [leverage, setLeverage] = useState(() => initialLeverage)
+
+  useEffect(() => {
+    setCapital(initialCapital)
+  }, [initialCapital])
+
+  useEffect(() => {
+    setLeverage(initialLeverage)
+  }, [initialLeverage])
 
   const periodsPerDay = 3 // 8h periods
   const effectiveCapital = capital * leverage

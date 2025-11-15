@@ -1,29 +1,34 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import type { Opportunity } from '@/types/opportunity'
+import type { Opportunity } from '@/types'
 
 const CHANNELS = [
   { value: 'email', label: 'Email' },
-  { value: 'telegram', label: 'Telegram' },
+  { value: 'whatsapp', label: 'WhatsApp' },
 ]
 
 type Props = {
   opportunities: Opportunity[]
+  defaultChannel?: 'email' | 'whatsapp'
 }
 
-export function AlertComposer({ opportunities }: Props) {
+export function AlertComposer({ opportunities, defaultChannel = 'email' }: Props) {
   const [open, setOpen] = useState(false)
   const [pair, setPair] = useState(opportunities[0]?.pair ?? 'BTC/USDT-PERP')
   const [exchange, setExchange] = useState(opportunities[0]?.exchange ?? 'Binance')
   const [threshold, setThreshold] = useState(0.1)
-  const [channel, setChannel] = useState('email')
+  const [channel, setChannel] = useState(defaultChannel)
   const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    setChannel(defaultChannel)
+  }, [defaultChannel])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()

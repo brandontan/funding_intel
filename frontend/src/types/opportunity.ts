@@ -2,6 +2,7 @@ export type Opportunity = {
   id: string;
   pair: string;
   exchange: string;
+  exchangeKey: string;
   fundingRate: number;
   netRateAfterFees: number;
   persistenceScore: number;

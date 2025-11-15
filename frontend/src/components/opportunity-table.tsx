@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import type { Opportunity } from '@/types/opportunity'
+import type { Opportunity } from '@/types'
 
 const RISK_LABEL: Record<string, string> = {
   A: 'Low',

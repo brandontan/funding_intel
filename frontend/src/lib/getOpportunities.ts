@@ -1,11 +1,6 @@
 import { supabase } from '@/lib/live-data'
-import type { Opportunity } from '@/types/opportunity'
-
-const EXCHANGE_DISPLAY: Record<string, string> = {
-  binance: 'Binance',
-  bybit: 'Bybit',
-  okx: 'OKX',
-}
+import { toExchangeLabel, normalizeExchange } from '@/lib/exchanges'
+import type { Opportunity } from '@/types'
 
 export async function getOpportunities(): Promise<Opportunity[]> {
   if (!supabase) {
@@ -26,7 +21,8 @@ export async function getOpportunities(): Promise<Opportunity[]> {
   return (data ?? []).map((row) => ({
     id: `${row.pair}-${row.exchange}`,
     pair: row.pair,
-    exchange: EXCHANGE_DISPLAY[row.exchange] ?? row.exchange,
+    exchange: toExchangeLabel(row.exchange),
+    exchangeKey: normalizeExchange(row.exchange),
     fundingRate: row.current_funding_rate,
     netRateAfterFees: row.net_rate_after_fees,
     persistenceScore: row.persistence_score,
