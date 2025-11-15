@@ -1,6 +1,8 @@
 # Node / Next artifacts
 node_modules/
 fetchers/node_modules/
+fetchers/.env
+frontend/.env.local
 frontend/.next/
 frontend/out/
 

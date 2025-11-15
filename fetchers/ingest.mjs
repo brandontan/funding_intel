@@ -3,6 +3,11 @@ import { performance } from 'node:perf_hooks';
 import { fetchBinanceRates } from './adapters/binance.mjs';
 import { fetchBybitRates } from './adapters/bybit.mjs';
 import { fetchOkxRates } from './adapters/okx.mjs';
+import { fetchDeribitRates } from './adapters/deribit.mjs';
+import { fetchBitgetRates } from './adapters/bitget.mjs';
+import { fetchHuobiRates } from './adapters/huobi.mjs';
+import { fetchDydxRates } from './adapters/dydx.mjs';
+import { fetchGateRates } from './adapters/gate.mjs';
 
 const TARGET_PAIRS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
 const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -21,6 +26,11 @@ const adapters = [
   { name: 'binance', fn: fetchBinanceRates },
   { name: 'bybit', fn: fetchBybitRates },
   { name: 'okx', fn: fetchOkxRates },
+  { name: 'deribit', fn: fetchDeribitRates },
+  { name: 'bitget', fn: fetchBitgetRates },
+  { name: 'htx', fn: fetchHuobiRates },
+  { name: 'dydx', fn: fetchDydxRates },
+  { name: 'gate', fn: fetchGateRates },
 ];
 
 async function recordMetric(exchange, latencyMs, status, metadata = {}) {
