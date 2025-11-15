@@ -33,7 +33,7 @@ export async function GET(request: Request) {
 
   const { data: historyRows, error: historyError } = await supabase
     .from('funding_rates')
-    .select('funding_rate,mark_price,fetched_at')
+    .select('funding_rate,mark_price,fetched_at,next_funding_time')
     .eq('pair', pair)
     .eq('exchange', exchange)
     .order('fetched_at', { ascending: false })
@@ -53,8 +53,10 @@ export async function GET(request: Request) {
   const avgMarkPrice =
     historyRows && historyRows.length > 0
       ? historyRows.reduce((sum, row) => sum + Number(row.mark_price ?? 0), 0) / historyRows.length
-      : opportunity.current_funding_rate
+      : null
+  const nextFundingTime = historyRows?.[0]?.next_funding_time ?? null
   const fees = getFeeBreakdown(exchange)
+  const recommendedThreshold = Number((opportunity.current_funding_rate * 0.85).toFixed(4))
 
   return NextResponse.json({
     pair: opportunity.pair,
@@ -73,5 +75,7 @@ export async function GET(request: Request) {
     takerFeeBps: fees.takerBps,
     borrowCostBps: fees.borrowBps,
     history,
+    nextFundingTime,
+    recommendedThreshold,
   })
 }

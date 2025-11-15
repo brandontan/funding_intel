@@ -25,6 +25,7 @@ Exchange APIs (Binance / Bybit / OKX)
 - `funding_rates`: `id`, `exchange`, `pair`, `funding_rate`, `mark_price`, `next_funding_time`, `fetched_at`.
 - `opportunities`: `id`, `pair`, `exchange`, `current_funding_rate`, `persistence_score`, `risk_grade`, `net_rate_after_fees`, `spread_vs_spot`, `capital_required`, `updated_at`.
 - `alerts`: `id`, `user_id`, `pair`, `exchange`, `threshold_rate`, `channel`, `status`, `last_triggered_at`.
+- `alert_events`: `alert_id`, `channel`, `delivery_status`, `message`, `payload`, `created_at`.
 - `metrics`: store API latency + success.
 
 ### APIs / Modules

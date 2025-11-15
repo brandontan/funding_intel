@@ -31,15 +31,25 @@ export function AlertComposer({ opportunities, defaultChannel = 'email' }: Props
   }, [defaultChannel])
 
   useEffect(() => {
+    type ComposerEventDetail = {
+      pair?: string
+      exchange?: string
+      thresholdPercent?: number
+    }
+
     function handleOpen(event: Event) {
-      const customEvent = event as CustomEvent<{ pair?: string; exchange?: string }>
+      const customEvent = event as CustomEvent<ComposerEventDetail>
       const nextPair = customEvent.detail?.pair
       const nextExchange = customEvent.detail?.exchange
+      const nextThreshold = customEvent.detail?.thresholdPercent
       if (nextPair) {
         setPair(nextPair)
       }
       if (nextExchange) {
         setExchange(nextExchange)
+      }
+      if (typeof nextThreshold === 'number' && !Number.isNaN(nextThreshold)) {
+        setThreshold(Number(nextThreshold.toFixed(2)))
       }
       setOpen(true)
     }

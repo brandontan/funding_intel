@@ -15,9 +15,11 @@ export type OpportunityDetail = {
   spreadVsSpot: number | null;
   capitalRequired: number | null;
   updatedAt: string;
-  avgMarkPrice: number;
+  avgMarkPrice: number | null;
   makerFeeBps: number;
   takerFeeBps: number;
   borrowCostBps: number;
   history: OpportunityHistoryPoint[];
+  nextFundingTime: string | null;
+  recommendedThreshold: number;
 };

@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "ingest": "node ingest.mjs"
+    "ingest": "node ingest.mjs",
+    "alerts": "node alerts_worker.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.1",

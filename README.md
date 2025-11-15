@@ -50,6 +50,16 @@ If Binance futures is geo-blocked for you (HTTP 451), deploy the Cloudflare Work
 
 Huobi's TLS chain isn't trusted in this environment, so deploy the Worker under `proxy/htx-worker.js` and set `HTX_PROXY_URL` + `HTX_PROXY_KEY` to make those requests go through Cloudflare as well.
 
+### Alert Worker (Task 5 groundwork)
+```
+cd fetchers
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+SENDGRID_API_KEY=... SENDGRID_FROM_EMAIL=... ALERT_DEFAULT_EMAIL=... \
+TELEGRAM_BOT_TOKEN=... TELEGRAM_DEFAULT_CHAT_ID=... \
+npm run alerts
+```
+The script polls `alerts` for active rules, compares them to `opportunities`, and dispatches email/Telegram notifications (stubbing if credentials are missing). It logs outcomes and updates `alert_events` + `alerts.last_triggered_at`.
+
 ## Database setup
 - Run the SQL in `supabase/migrations/20251115120000_init.sql` via the Supabase SQL editor or CLI (`supabase db push`) to create enums, tables, triggers, and RLS policies.
 - Confirm `user_settings`, `funding_rates`, `opportunities`, `alerts`, and `ingestion_metrics` exist before running fetchers or UI code.

@@ -26,6 +26,7 @@ export function OpportunityDrawer({ open, opportunity, onClose, capital, leverag
   const [error, setError] = useState('')
   const [detail, setDetail] = useState<OpportunityDetail | null>(null)
   const [copied, setCopied] = useState(false)
+  const thresholdPercent = detail ? detail.recommendedThreshold * 100 : opportunity?.fundingRate ? opportunity.fundingRate * 100 : 0
 
   useEffect(() => {
     if (!open || !opportunity) {
@@ -101,6 +102,16 @@ export function OpportunityDrawer({ open, opportunity, onClose, capital, leverag
     return { path, width, height, min, max }
   }, [detail])
 
+  const nextFundingEta = useMemo(() => {
+    if (!detail?.nextFundingTime) return null
+    const target = new Date(detail.nextFundingTime).getTime()
+    const diffMs = target - Date.now()
+    if (diffMs <= 0) return 'now'
+    const hours = Math.floor(diffMs / (1000 * 60 * 60))
+    const minutes = Math.floor((diffMs - hours * 60 * 60 * 1000) / (1000 * 60))
+    return `${hours}h ${minutes}m`
+  }, [detail?.nextFundingTime])
+
   if (!open || !opportunity) {
     return null
   }
@@ -111,6 +122,7 @@ export function OpportunityDrawer({ open, opportunity, onClose, capital, leverag
         detail: {
           pair: opportunity.pair,
           exchange: opportunity.exchange,
+          thresholdPercent,
         },
       })
     )
@@ -225,6 +237,20 @@ export function OpportunityDrawer({ open, opportunity, onClose, capital, leverag
                   <li key={step}>{step}</li>
                 ))}
               </ol>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-border/50 p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold">Next funding</h3>
+                <p className="text-xs text-muted-foreground">Payout countdown</p>
+              </div>
+              <p className="text-base font-semibold">{nextFundingEta ?? 'n/a'}</p>
+            </div>
+            <div className="rounded-lg bg-muted/40 p-3 text-sm">
+              Recommended alert threshold:{' '}
+              <span className="font-semibold">{thresholdPercent.toFixed(2)}%</span>
             </div>
           </div>
 
