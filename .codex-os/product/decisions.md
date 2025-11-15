@@ -10,10 +10,10 @@
 - **Decision**: Use Supabase for storage/auth/cron and Next.js for dashboards.
 - **Implication**: Avoids spinning up custom infra; ensures RLS + row-level preferences easier to implement.
 
-## 2025-11-15 – Alerts via Email + WhatsApp First
-- **Context**: WhatsApp is the fastest path to meaningful trader notifications, email is baseline.
-- **Decision**: Build Twilio WhatsApp + SendGrid integration during MVP; Telegram/Discord later.
-- **Implication**: Need compliance copy + opt-in flows now; future channels plug into same alert engine.
+## 2025-11-15 – Alerts via Email + Telegram First
+- **Context**: Telegram is the most requested channel from beta desks, email remains baseline.
+- **Decision**: Focus alert engine on SendGrid email + Telegram bot delivery during MVP; defer WhatsApp until compliance + template work is worth it.
+- **Implication**: UX copy, onboarding defaults, and backend workers only expose email + Telegram (skip option supported) while keeping architecture extensible for future channels.
 
 ## 2025-11-15 – Cookie IDs for Onboarding Defaults
 - **Context**: We need to store trader defaults before Supabase Auth is wired up, but Task 3 requires persisted settings.

@@ -16,7 +16,7 @@ Deliver a frictionless Web3 funding-rate intelligence hub that translates raw ex
 ## Success Metrics (MVP)
 - 10 beta users checking funding dashboards weekly.
 - 3 preorders at $99–$299/mo before auto-execution exists.
-- Alert delivery latency under 60 seconds for WhatsApp/email in pilot tests.
+- Alert delivery latency under 60 seconds for Telegram/email in pilot tests.
 
 ## Principles
 1. **Frictionless first**: everything read-only until users opt into automations.

@@ -13,7 +13,7 @@
 
 ### Week 3 – Risk + Alerts + Historical Context
 - Compute risk score (volatility stddev, exchange trust weight, persistence) nightly job.
-- Add alert composer UI + backend (sendgrid/email + Twilio/WhatsApp MVP) with threshold logic.
+- Add alert composer UI + backend (SendGrid email + Telegram bot MVP) with threshold logic.
 - Render historical mini charts + trailing heatmap (24h/7d) per instrument using stored rates.
 
 ### Week 4 – Polish + Beta Push

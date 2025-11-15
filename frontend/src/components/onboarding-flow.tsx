@@ -18,7 +18,7 @@ type Props = {
 
 const ALERT_CHANNELS = [
   { value: 'email', label: 'Email' },
-  { value: 'whatsapp', label: 'WhatsApp' },
+  { value: 'telegram', label: 'Telegram' },
 ]
 
 export function OnboardingFlow({ initialSettings, defaultOpen = false }: Props) {
@@ -50,14 +50,7 @@ export function OnboardingFlow({ initialSettings, defaultOpen = false }: Props) 
     setExchangePrefs(initialSettings.preferredExchanges)
     setAlertChannel(initialSettings.alertChannel)
     setSkipAlerts(initialSettings.alertOptedOut)
-  }, [
-    initialSettings?.userId,
-    initialSettings?.capitalDefault,
-    initialSettings?.leverage,
-    initialSettings?.preferredExchanges,
-    initialSettings?.alertChannel,
-    initialSettings?.alertOptedOut,
-  ])
+  }, [initialSettings])
 
   function toggleExchange(value: string) {
     setExchangePrefs((prev) => {

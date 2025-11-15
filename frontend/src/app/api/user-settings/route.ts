@@ -7,6 +7,8 @@ const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 const supabase = url && serviceRole ? createClient(url, serviceRole, { auth: { persistSession: false } }) : null
 
+const ALLOWED_CHANNELS = ['email', 'telegram'] as const
+
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 days
 
 function clamp(value: number, min: number, max: number) {
@@ -27,7 +29,12 @@ export async function POST(request: Request) {
     .filter((value) => DEFAULT_EXCHANGE_VALUES.includes(value))
   const finalExchanges = preferredExchanges.length ? preferredExchanges : DEFAULT_EXCHANGE_VALUES
   const skipAlerts = Boolean(body.skipAlerts)
-  const alertChannel = skipAlerts ? null : (body.alertChannel ?? 'email')
+  const requestedChannel = typeof body.alertChannel === 'string' ? body.alertChannel.toLowerCase() : 'email'
+  const alertChannel = skipAlerts
+    ? null
+    : (ALLOWED_CHANNELS.includes(requestedChannel as (typeof ALLOWED_CHANNELS)[number])
+        ? (requestedChannel as (typeof ALLOWED_CHANNELS)[number])
+        : 'email')
   const alertChannels = alertChannel ? [alertChannel] : []
 
   const payload = {

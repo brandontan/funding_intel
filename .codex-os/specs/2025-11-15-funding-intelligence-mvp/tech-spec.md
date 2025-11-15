@@ -8,7 +8,7 @@ Exchange APIs (Binance / Bybit / OKX)
         ↓
  Next.js (Vercel) dashboard + onboarding + alerts composer
         ↓
- Alert workers (Edge Function) → SendGrid email / Twilio WhatsApp
+ Alert workers (Edge Function) → SendGrid email / Telegram Bot API
 ```
 
 ### Data Flow
@@ -17,7 +17,7 @@ Exchange APIs (Binance / Bybit / OKX)
 3. **Opportunity builder** (scheduled) calculates: estimated 8h/24h profit, APY, persistence (rolling stddev), risk grade (A/B/C) saved in `opportunities`.
 4. **Frontend** queries `opportunities_view` (materialized) for hero, tiles, table, and historical heatmap.
 5. **Profit calculator** uses user defaults (`users_settings`) to produce per-opportunity profit displayed inline.
-6. **Alerts**: user-defined rules saved to `alerts`. When funding crosses threshold, trigger `alert_dispatch` job, queue message to SendGrid or Twilio.
+6. **Alerts**: user-defined rules saved to `alerts`. When funding crosses threshold, trigger `alert_dispatch` job, queue message to SendGrid or Telegram.
 
 ### Data Model (draft)
 - `users`: Supabase auth.
@@ -42,7 +42,7 @@ Grades: `A >= 0.8`, `B >= 0.55`, else `C` (render color-coded + label).
 
 ### Alert Channels
 - **Email**: SendGrid dynamic template with hero stats + CTA.
-- **WhatsApp**: Twilio template “Funding Alert: {pair} on {exchange} now {rate}% → {profit}/8h on ${capital}. Link.”
+- **Telegram**: Bot API message “Funding Alert: {pair} on {exchange} now {rate}% → {profit}/8h on ${capital}. Link.” delivered via bot + chat ID stored per user.
 
 ### Security & Compliance
 - No private exchange keys stored. Onboarding clarifies read-only nature.
@@ -54,6 +54,6 @@ Grades: `A >= 0.8`, `B >= 0.55`, else `C` (render color-coded + label).
 - PostHog events for onboarding completion, hero CTA usage, alert toggles.
 
 ### Deployment
-- Vercel for Next.js; environment variables for Supabase + SendGrid + Twilio + PostHog.
+- Vercel for Next.js; environment variables for Supabase + SendGrid + Telegram Bot + PostHog.
 - Supabase scheduled functions for ingestion + derived opportunity jobs.
 - n8n optional for automation share-out; Execution checklist button posts to n8n webhook stub.

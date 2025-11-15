@@ -10,7 +10,7 @@ A 30-day MVP sprint for a Web3 funding rate intelligence hub that pinpoints the 
 ## MVP Scope
 1. **Data ingestion**: minute-level fetchers for Binance/Bybit/OKX storing normalized records in Supabase.
 2. **Experience**: hero summary, three featured tiles, sortable opportunity list with drawers, always-on profit calculator, onboarding, and trust cues.
-3. **Alerts**: email + WhatsApp composer with threshold logic, quick test button, and per-row quick actions.
+3. **Alerts**: email + Telegram composer with threshold logic, quick test button, and per-row quick actions.
 4. **Historical context**: heatmap modal/tab with volatility + open interest overlays.
 5. **Execution helpers**: checklist modal + “Send to n8n workflow” placeholder for future automation.
 
@@ -57,4 +57,4 @@ Huobi's TLS chain isn't trusted in this environment, so deploy the Worker under 
 ## Next Steps
 - Implement Task 1 from the spec: Supabase schema + ingestion fetchers.
 - Set up repo tooling (Next.js app, lint config) ahead of UI sprint.
-- Secure credentials (Supabase, SendGrid, Twilio, PostHog) per stack checklist.
+- Secure credentials (Supabase, SendGrid, Telegram bot, PostHog) per stack checklist.

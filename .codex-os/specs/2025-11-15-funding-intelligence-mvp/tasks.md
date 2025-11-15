@@ -20,14 +20,14 @@
 
 ## Task 4 – Risk Scoring & Drawer Details
 - Implement opportunity scoring job deriving risk grade from volatility/persistence/exchange trust.
-- Build side drawer component showing persistence chart, fee breakdown, hedging steps, quick action buttons (alert, copy order, send to WhatsApp share stub).
+- Build side drawer component showing persistence chart, fee breakdown, hedging steps, quick action buttons (alert, copy order, send to Telegram share stub).
 - **Acceptance**: table rows open drawers with fully populated info; risk badge updates based on derived grade.
 
-## Task 5 – Alerts Engine (Email + WhatsApp)
+## Task 5 – Alerts Engine (Email + Telegram)
 - CRUD UI for alerts with thresholds, exchange/pair filters, channel selection, and “test notification”.
-- Backend worker polls for triggered rules and sends via SendGrid/Twilio; store results + last triggered time.
+- Backend worker polls for triggered rules and sends via SendGrid/Telegram Bot API; store results + last triggered time.
 - Include alert composer slide-out accessible anywhere.
-- **Acceptance**: rule fires when funding exceeds threshold, logs delivery status, and user receives sample email/WhatsApp (test mode acceptable).
+- **Acceptance**: rule fires when funding exceeds threshold, logs delivery status, and user receives sample email/Telegram (test mode acceptable).
 
 ## Task 6 – Historical Dashboard & Heatmap
 - Store trailing 24h/7d funding series per pair; build heatmap tab or modal with overlays for volatility + open interest.

@@ -3,6 +3,6 @@ export type UserSettings = {
   capitalDefault: number;
   leverage: number;
   preferredExchanges: string[];
-  alertChannel: 'email' | 'whatsapp';
+  alertChannel: 'email' | 'telegram';
   alertOptedOut: boolean;
 };

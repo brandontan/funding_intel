@@ -6,7 +6,7 @@ Crypto traders chase perpetual funding yield but current tools (Coinglass, gener
 ## Goals
 1. Aggregate Binance/Bybit/OKX funding data, normalize, and highlight the best net opportunities.
 2. Display capital-aware hero stats, trio overview tiles (BTC/ETH/SOL default), and sortable table with drawers.
-3. Provide persistent profit calculator + alert composer (email + WhatsApp) with trust cues and onboarding.
+3. Provide persistent profit calculator + alert composer (email + Telegram) with trust cues and onboarding.
 
 ## Non-Goals
 - Automated trade execution.
@@ -15,7 +15,7 @@ Crypto traders chase perpetual funding yield but current tools (Coinglass, gener
 
 ## Users & Personas
 - **Semi-pro hedger**: hedges books weekly; needs at-a-glance profit figure + quick alert button.
-- **Small prop desk lead**: needs persistence confidence + ability to share snapshot to teammates (WhatsApp).
+- **Small prop desk lead**: needs persistence confidence + ability to share snapshot to teammates (Telegram).
 - **DAO treasurer**: monitors funding vs volatility, values historical heatmap before deploying idle capital.
 
 ## Success Metrics

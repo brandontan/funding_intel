@@ -7,7 +7,7 @@
 | API layer | Supabase RPC / Edge Functions | Keep backend minimal, leverage Supabase auth for user-specific settings. |
 | Frontend | Next.js 15 + React Server Components + Tailwind | Rapid dashboard iteration, first-class data fetching + SEO for landing page. |
 | State & charts | React Query/Zustand + Tremor/Recharts | Supports live funding updates + historical heatmaps. |
-| Notifications | SendGrid (email) + Twilio WhatsApp API | Covers email + WhatsApp, extensible to Telegram later. |
+| Notifications | SendGrid (email) + Telegram Bot API | Covers email + Telegram, extensible to WhatsApp later if compliance lifted. |
 | Automation hooks | n8n / Zapier-style webhooks | Allow “Send to automation” button without building custom engine yet. |
 | Analytics | PostHog or Supabase analytics | Understand onboarding funnel + retention for beta. |
 
@@ -17,5 +17,5 @@
 
 ## Credentials Checklist
 1. Supabase project + service role + anon key.
-2. SendGrid + Twilio API keys.
+2. SendGrid + Telegram Bot token.
 3. Optional: Vercel + PostHog tokens.

@@ -9,12 +9,12 @@ import type { Opportunity } from '@/types'
 
 const CHANNELS = [
   { value: 'email', label: 'Email' },
-  { value: 'whatsapp', label: 'WhatsApp' },
+  { value: 'telegram', label: 'Telegram' },
 ]
 
 type Props = {
   opportunities: Opportunity[]
-  defaultChannel?: 'email' | 'whatsapp'
+  defaultChannel?: 'email' | 'telegram'
 }
 
 export function AlertComposer({ opportunities, defaultChannel = 'email' }: Props) {
