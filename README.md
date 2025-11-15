@@ -1,0 +1,31 @@
+# Funding Intelligence
+
+A 30-day MVP sprint for a Web3 funding rate intelligence hub that pinpoints the best cash-and-carry plays across Binance, Bybit, and OKX. The product focuses on translating raw funding data into capital-aware profit insights, risk grades, and instant alerts while keeping the experience fully read-only until automation features are ready.
+
+## Why This Matters
+- Traders and small desks currently rely on spreadsheets + Coinglass-style tables without fee/risk context.
+- Funding yields remain one of the few consistent “cash-and-carry” strategies, yet tooling gaps keep retail + boutique desks from scaling it.
+- A polished UX that shows “BTC funding 0.126% → $37.80/8h on $10K” plus alerting can command $99–$299/mo before automation exists.
+
+## MVP Scope
+1. **Data ingestion**: minute-level fetchers for Binance/Bybit/OKX storing normalized records in Supabase.
+2. **Experience**: hero summary, three featured tiles, sortable opportunity list with drawers, always-on profit calculator, onboarding, and trust cues.
+3. **Alerts**: email + WhatsApp composer with threshold logic, quick test button, and per-row quick actions.
+4. **Historical context**: heatmap modal/tab with volatility + open interest overlays.
+5. **Execution helpers**: checklist modal + “Send to n8n workflow” placeholder for future automation.
+
+Consult `.codex-os/specs/2025-11-15-funding-intelligence-mvp/` for detailed SRD, architecture, and task breakdown.
+
+## Project Structure
+```
+.codex-os/
+  product/        ← mission, roadmap, stack, decisions
+  standards/      ← tech + code style guidance for this repo
+  specs/          ← dated MVP spec with SRD, tech-spec, tasks
+README.md         ← high-level context + scope
+```
+
+## Next Steps
+- Implement Task 1 from the spec: Supabase schema + ingestion fetchers.
+- Set up repo tooling (Next.js app, lint config) ahead of UI sprint.
+- Secure credentials (Supabase, SendGrid, Twilio, PostHog) per stack checklist.
