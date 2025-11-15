@@ -10,10 +10,18 @@ const RESPONSE_SCHEMA = z.array(
   })
 );
 
+const BINANCE_PATH = '/fapi/v1/premiumIndex';
+
 export async function fetchBinanceRates(targetPairs = []) {
-  const res = await fetch('https://fapi.binance.com/fapi/v1/premiumIndex', {
-    headers: DEFAULT_HEADERS,
-  });
+  const proxyBase = process.env.BINANCE_PROXY_URL?.replace(/\/$/, '');
+  const requestUrl = (proxyBase ?? 'https://fapi.binance.com') + BINANCE_PATH;
+  const headers = { ...DEFAULT_HEADERS };
+  const proxyKey = process.env.BINANCE_PROXY_KEY;
+  if (proxyBase && proxyKey) {
+    headers['x-proxy-key'] = proxyKey;
+  }
+
+  const res = await fetch(requestUrl, { headers });
   if (!res.ok) {
     throw new Error(`Binance request failed: ${res.status} ${res.statusText}`);
   }

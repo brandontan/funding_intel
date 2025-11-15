@@ -46,6 +46,8 @@ SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npm run ingest
 ```
 `npm run ingest` hits Binance/Bybit/OKX public endpoints, normalizes BTC/ETH/SOL funding data, inserts rows into `funding_rates`, and logs metrics in Supabase.
 
+If Binance futures is geo-blocked for you (HTTP 451), deploy the Cloudflare Worker under `proxy/binance-worker.js` and set `BINANCE_PROXY_URL` + `BINANCE_PROXY_KEY` before running the fetcher so traffic goes through your proxy.
+
 ## Database setup
 - Run the SQL in `supabase/migrations/20251115120000_init.sql` via the Supabase SQL editor or CLI (`supabase db push`) to create enums, tables, triggers, and RLS policies.
 - Confirm `user_settings`, `funding_rates`, `opportunities`, `alerts`, and `ingestion_metrics` exist before running fetchers or UI code.
