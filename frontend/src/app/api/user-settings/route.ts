@@ -10,9 +10,41 @@ const supabase = url && serviceRole ? createClient(url, serviceRole, { auth: { p
 const ALLOWED_CHANNELS = ['email', 'telegram'] as const
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 days
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
+}
+
+function sanitizeEmail(value: unknown) {
+  if (typeof value !== 'string') {
+    return null
+  }
+  const trimmed = value.trim().toLowerCase()
+  if (!trimmed || !EMAIL_REGEX.test(trimmed)) {
+    return null
+  }
+  return trimmed
+}
+
+function sanitizeTelegramHandle(value: unknown) {
+  if (typeof value !== 'string') {
+    return null
+  }
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return null
+  }
+
+  if (/^-?\d+$/.test(trimmed)) {
+    return trimmed
+  }
+
+  const normalized = trimmed.startsWith('@') ? trimmed : `@${trimmed}`
+  if (!/^@[a-zA-Z0-9_]{2,}$/i.test(normalized)) {
+    return null
+  }
+  return normalized.toLowerCase()
 }
 
 export async function POST(request: Request) {
@@ -36,12 +68,16 @@ export async function POST(request: Request) {
         ? (requestedChannel as (typeof ALLOWED_CHANNELS)[number])
         : 'email')
   const alertChannels = alertChannel ? [alertChannel] : []
+  const emailAddress = sanitizeEmail(body.contactEmail)
+  const telegramHandle = sanitizeTelegramHandle(body.telegramHandle)
 
   const payload = {
     capital_default: capital,
     leverage,
     preferred_exchanges: finalExchanges,
     alert_channels: alertChannels,
+    email_address: emailAddress,
+    telegram_handle: telegramHandle,
   }
 
   const userId = body.userId
@@ -63,6 +99,8 @@ export async function POST(request: Request) {
       preferredExchanges: finalExchanges,
       alertChannel: alertChannel ?? 'email',
       alertOptedOut: skipAlerts,
+      contactEmail: emailAddress ?? undefined,
+      telegramHandle: telegramHandle ?? undefined,
     },
   })
 

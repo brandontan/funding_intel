@@ -5,4 +5,6 @@ export type UserSettings = {
   preferredExchanges: string[];
   alertChannel: 'email' | 'telegram';
   alertOptedOut: boolean;
+  contactEmail?: string;
+  telegramHandle?: string;
 };

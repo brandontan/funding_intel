@@ -15,9 +15,11 @@ const CHANNELS = [
 type Props = {
   opportunities: Opportunity[]
   defaultChannel?: 'email' | 'telegram'
+  userId?: string
+  contactReady?: boolean
 }
 
-export function AlertComposer({ opportunities, defaultChannel = 'email' }: Props) {
+export function AlertComposer({ opportunities, defaultChannel = 'email', userId, contactReady = false }: Props) {
   const [open, setOpen] = useState(false)
   const [pair, setPair] = useState(opportunities[0]?.pair ?? 'BTC/USDT-PERP')
   const [exchange, setExchange] = useState(opportunities[0]?.exchange ?? 'Binance')
@@ -25,10 +27,19 @@ export function AlertComposer({ opportunities, defaultChannel = 'email' }: Props
   const [channel, setChannel] = useState(defaultChannel)
   const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
 
   useEffect(() => {
     setChannel(defaultChannel)
   }, [defaultChannel])
+
+  useEffect(() => {
+    if (!open) {
+      setNotice('')
+      setError('')
+      setStatus('idle')
+    }
+  }, [open])
 
   useEffect(() => {
     type ComposerEventDetail = {
@@ -59,18 +70,28 @@ export function AlertComposer({ opportunities, defaultChannel = 'email' }: Props
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (!userId) {
+      setNotice('Finish trader defaults so alerts can be linked to your account.')
+      return
+    }
+    if (!contactReady) {
+      setNotice('Add an email or Telegram handle before saving alerts.')
+      return
+    }
+
     setStatus('saving')
     setError('')
     try {
       const res = await fetch('/api/alerts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pair, exchange, thresholdRate: threshold / 100, channel }),
+        body: JSON.stringify({ pair, exchange, thresholdRate: threshold / 100, channel, userId }),
       })
       if (!res.ok) {
         throw new Error('Failed to save alert')
       }
       setStatus('success')
+      setNotice('')
       setTimeout(() => {
         setOpen(false)
         setStatus('idle')
@@ -84,7 +105,14 @@ export function AlertComposer({ opportunities, defaultChannel = 'email' }: Props
 
   return (
     <>
-      <Button variant="outline" size="sm" className="border-primary/30 hover:bg-primary/10" onClick={() => setOpen(true)}>
+      <Button
+        variant="outline"
+        size="sm"
+        className="border-primary/30 hover:bg-primary/10"
+        onClick={() => setOpen(true)}
+        disabled={!userId}
+        title={!userId ? 'Save your trader defaults to enable alerts' : undefined}
+      >
         Create Alert
       </Button>
       {open && (
@@ -95,6 +123,11 @@ export function AlertComposer({ opportunities, defaultChannel = 'email' }: Props
             </CardHeader>
             <CardContent>
               <form className="space-y-4" onSubmit={handleSubmit}>
+                {(!contactReady || notice) && (
+                  <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
+                    {notice || 'Add contact info in trader defaults so alerts know where to deliver.'}
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label>Pair</Label>
                   <select className="w-full rounded-md border bg-background px-3 py-2" value={pair} onChange={(e) => setPair(e.target.value)}>
@@ -139,7 +172,7 @@ export function AlertComposer({ opportunities, defaultChannel = 'email' }: Props
                   <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={status === 'saving'}>
+                  <Button type="submit" disabled={status === 'saving' || !contactReady || !userId}>
                     {status === 'saving' ? 'Saving...' : status === 'success' ? 'Saved!' : 'Create alert'}
                   </Button>
                 </div>

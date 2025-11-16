@@ -31,6 +31,8 @@ export function OnboardingFlow({ initialSettings, defaultOpen = false }: Props) 
   )
   const [alertChannel, setAlertChannel] = useState(initialSettings?.alertChannel ?? 'email')
   const [skipAlerts, setSkipAlerts] = useState(initialSettings?.alertOptedOut ?? false)
+  const [contactEmail, setContactEmail] = useState(initialSettings?.contactEmail ?? '')
+  const [telegramHandle, setTelegramHandle] = useState(initialSettings?.telegramHandle ?? '')
   const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
   const [error, setError] = useState('')
 
@@ -50,6 +52,8 @@ export function OnboardingFlow({ initialSettings, defaultOpen = false }: Props) 
     setExchangePrefs(initialSettings.preferredExchanges)
     setAlertChannel(initialSettings.alertChannel)
     setSkipAlerts(initialSettings.alertOptedOut)
+    setContactEmail(initialSettings.contactEmail ?? '')
+    setTelegramHandle(initialSettings.telegramHandle ?? '')
   }, [initialSettings])
 
   function toggleExchange(value: string) {
@@ -79,6 +83,8 @@ export function OnboardingFlow({ initialSettings, defaultOpen = false }: Props) 
           preferredExchanges: exchangePrefs,
           alertChannel,
           skipAlerts: nextSkipAlerts,
+          contactEmail,
+          telegramHandle,
           userId: initialSettings?.userId,
         }),
       })
@@ -182,6 +188,34 @@ export function OnboardingFlow({ initialSettings, defaultOpen = false }: Props) 
                       )
                     })}
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact-email">Alert email</Label>
+                  <Input
+                    id="contact-email"
+                    type="email"
+                    inputMode="email"
+                    placeholder="you@example.com"
+                    value={contactEmail}
+                    disabled={skipAlerts}
+                    onChange={(event) => setContactEmail(event.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    SendGrid worker uses this address when alerts trigger.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="telegram-handle">Telegram handle or chat ID</Label>
+                  <Input
+                    id="telegram-handle"
+                    placeholder="@fundingintel"
+                    value={telegramHandle}
+                    disabled={skipAlerts}
+                    onChange={(event) => setTelegramHandle(event.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Paste your Telegram @handle or chat ID so we can ping you directly.
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">

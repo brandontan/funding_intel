@@ -28,9 +28,10 @@ Threshold: ${(alert.threshold_rate * 100).toFixed(3)}%
 Updated at: ${new Date(opportunity.updated_at).toLocaleString()}`;
 }
 
-async function sendEmail(message) {
-  if (!SENDGRID_API_KEY || !SENDGRID_FROM_EMAIL || !ALERT_DEFAULT_EMAIL) {
-    console.info('Email alert stubbed (missing SendGrid env vars). Message:', message);
+async function sendEmail(message, recipient) {
+  const target = recipient ?? ALERT_DEFAULT_EMAIL;
+  if (!SENDGRID_API_KEY || !SENDGRID_FROM_EMAIL || !target) {
+    console.info('Email alert stubbed (missing config). Message:', message, 'Recipient:', target ?? 'n/a');
     return { status: 'stubbed-email' };
   }
 
@@ -41,7 +42,7 @@ async function sendEmail(message) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      personalizations: [{ to: [{ email: ALERT_DEFAULT_EMAIL }] }],
+      personalizations: [{ to: [{ email: target }] }],
       from: { email: SENDGRID_FROM_EMAIL, name: 'Funding Intelligence' },
       subject: 'Funding alert triggered',
       content: [{ type: 'text/plain', value: message }],
@@ -56,9 +57,10 @@ async function sendEmail(message) {
   return { status: 'sent', provider: 'sendgrid' };
 }
 
-async function sendTelegram(message) {
-  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_DEFAULT_CHAT_ID) {
-    console.info('Telegram alert stubbed (missing Telegram env vars). Message:', message);
+async function sendTelegram(message, recipient) {
+  const target = recipient ?? TELEGRAM_DEFAULT_CHAT_ID;
+  if (!TELEGRAM_BOT_TOKEN || !target) {
+    console.info('Telegram alert stubbed (missing Telegram config). Message:', message, 'Recipient:', target ?? 'n/a');
     return { status: 'stubbed-telegram' };
   }
 
@@ -66,7 +68,7 @@ async function sendTelegram(message) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      chat_id: TELEGRAM_DEFAULT_CHAT_ID,
+      chat_id: target,
       text: message,
     }),
   });
@@ -79,14 +81,41 @@ async function sendTelegram(message) {
   return { status: 'sent', provider: 'telegram' };
 }
 
+const settingsCache = new Map();
+
+async function fetchUserSettings(userId) {
+  if (!userId) {
+    return null;
+  }
+  if (settingsCache.has(userId)) {
+    return settingsCache.get(userId);
+  }
+  const { data, error } = await supabase
+    .from('user_settings')
+    .select('email_address, telegram_handle')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) {
+    console.error(`Failed to load user settings for ${userId}`, error.message);
+    settingsCache.set(userId, null);
+    return null;
+  }
+  settingsCache.set(userId, data ?? null);
+  return data ?? null;
+}
+
 async function dispatchAlert(alert, opportunity) {
   const message = formatAlertMessage(alert, opportunity);
+  const userSettings = await fetchUserSettings(alert.user_id);
   let result;
+  let recipient;
 
   if (alert.channel === 'email') {
-    result = await sendEmail(message);
+    recipient = userSettings?.email_address;
+    result = await sendEmail(message, recipient);
   } else if (alert.channel === 'telegram') {
-    result = await sendTelegram(message);
+    recipient = userSettings?.telegram_handle;
+    result = await sendTelegram(message, recipient);
   } else {
     console.warn(`Unsupported channel ${alert.channel}, skipping`);
     return null;
@@ -100,6 +129,7 @@ async function dispatchAlert(alert, opportunity) {
     payload: {
       opportunity_id: opportunity.id,
       provider: result.provider ?? 'stub',
+      recipient: recipient ?? (alert.channel === 'email' ? ALERT_DEFAULT_EMAIL : TELEGRAM_DEFAULT_CHAT_ID) ?? 'unset',
     },
   };
 

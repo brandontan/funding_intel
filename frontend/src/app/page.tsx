@@ -5,9 +5,11 @@ import { OpportunityTable } from '@/components/opportunity-table'
 import { ProfitCalculator } from '@/components/profit-calculator'
 import { AlertComposer } from '@/components/alert-composer'
 import { OnboardingFlow } from '@/components/onboarding-flow'
+import { AlertHistory } from '@/components/alert-history'
 import { getOpportunities } from '@/lib/getOpportunities'
 import { getUserSettings } from '@/lib/getUserSettings'
 import { getFundingAnalytics } from '@/lib/getFundingAnalytics'
+import { getAlertHistory } from '@/lib/getAlertHistory'
 import { DEFAULT_EXCHANGE_VALUES } from '@/lib/exchanges'
 import { prioritizeOpportunities } from '@/lib/prioritizeOpportunities'
 import { DeepAnalytics } from '@/components/deep-analytics'
@@ -22,11 +24,15 @@ export default async function Page() {
   const capital = userSettings?.capitalDefault ?? 10000
   const leverage = userSettings?.leverage ?? 1
   const preferredExchanges = userSettings?.preferredExchanges ?? DEFAULT_EXCHANGE_VALUES
+  const alertReady =
+    Boolean(userSettings?.userId) &&
+    Boolean(!userSettings?.alertOptedOut && (userSettings?.contactEmail || userSettings?.telegramHandle))
 
   const opportunities = await getOpportunities()
   const analytics = await getFundingAnalytics()
   const prioritized = prioritizeOpportunities(opportunities, preferredExchanges)
   const hero = prioritized[0]
+  const alertEvents = userSettings ? await getAlertHistory(userSettings.userId) : []
   const effectiveCapital = capital * leverage
   const heroData = hero
     ? {
@@ -73,6 +79,8 @@ export default async function Page() {
             <AlertComposer
               opportunities={opportunities}
               defaultChannel={userSettings?.alertChannel ?? 'email'}
+              userId={userSettings?.userId}
+              contactReady={alertReady}
             />
           </div>
         </div>
@@ -91,12 +99,13 @@ export default async function Page() {
 
           {/* Right Column - Sticky Calculator */}
           <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-6">
+            <div className="lg:sticky lg:top-6 space-y-6">
               <ProfitCalculator
                 fundingRate={heroData.fundingRate}
                 initialCapital={capital}
                 initialLeverage={leverage}
               />
+              <AlertHistory events={alertEvents} contactReady={alertReady} />
             </div>
           </div>
         </div>
