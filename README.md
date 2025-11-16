@@ -46,7 +46,7 @@ SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npm run ingest
 ```
 `npm run ingest` hits Binance/Bybit/OKX public endpoints, normalizes BTC/ETH/SOL funding data, inserts rows into `funding_rates`, and logs metrics in Supabase.
 
-If Binance futures is geo-blocked for you (HTTP 451), deploy the Cloudflare Worker under `proxy/binance-worker.js` and set `BINANCE_PROXY_URL` + `BINANCE_PROXY_KEY` before running the fetcher so traffic goes through your proxy.
+If Binance futures is geo-blocked for you (HTTP 451), deploy the Cloudflare Worker under `proxy/binance-worker.js` (or point to the São Paulo VPS proxy) and set `BINANCE_PROXY_URL` + `BINANCE_PROXY_KEY` before running the fetcher so traffic goes through your proxy. The Bybit adapter now supports the same pattern via `BYBIT_PROXY_URL` + `BYBIT_PROXY_KEY`.
 
 Huobi's TLS chain isn't trusted in this environment, so deploy the Worker under `proxy/htx-worker.js` and set `HTX_PROXY_URL` + `HTX_PROXY_KEY` to make those requests go through Cloudflare as well.
 
