@@ -19,7 +19,7 @@ type Props = {
 const ALERT_CHANNELS = [
   { value: 'email', label: 'Email' },
   { value: 'telegram', label: 'Telegram' },
-]
+] as const
 
 export function OnboardingFlow({ initialSettings, defaultOpen = false }: Props) {
   const router = useRouter()

@@ -50,6 +50,20 @@ If Binance futures is geo-blocked for you (HTTP 451), deploy the Cloudflare Work
 
 Huobi's TLS chain isn't trusted in this environment, so deploy the Worker under `proxy/htx-worker.js` (or reuse the VPS proxy via `/htx`) and set `HTX_PROXY_URL` + `HTX_PROXY_KEY` to make those requests go through Cloudflare (or the VPS) as well.
 
+### Vercel Deployment
+The Next.js frontend is linked to the Vercel project `funding-intel` under the `brandontan's projects` team. Deployments consume these environment variables (set for Production/Preview/Development in Vercel):
+
+| Variable | Value |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://ezajbjqsrpxiblkgjhws.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
+| `SUPABASE_URL` | `https://ezajbjqsrpxiblkgjhws.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service-role key (server only) |
+| `BETA_AUTH_USER` | `beta` |
+| `BETA_AUTH_PASS` | `preview-pass-2025` |
+
+Password protection is enforced via middleware, so every route prompts for HTTP Basic Auth using the credentials above. Rotate the password by updating the Vercel env var and redeploying (`cd frontend && vercel deploy --prod --yes`). For new environments, run `vercel link`, then `vercel env pull` / `vercel env add ...` to sync the variables before deploying.
+
 ### Alert Worker (Task 5 groundwork)
 ```
 cd fetchers

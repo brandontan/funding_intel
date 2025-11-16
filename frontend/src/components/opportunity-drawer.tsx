@@ -34,11 +34,15 @@ export function OpportunityDrawer({ open, opportunity, onClose, capital, leverag
     }
 
     const controller = new AbortController()
+    const currentOpportunity = opportunity
     async function loadDetail() {
       setLoading(true)
       setError('')
       try {
-        const params = new URLSearchParams({ pair: opportunity.pair, exchange: opportunity.exchangeKey ?? opportunity.exchange.toLowerCase() })
+        const params = new URLSearchParams({
+          pair: currentOpportunity.pair,
+          exchange: currentOpportunity.exchangeKey ?? currentOpportunity.exchange.toLowerCase(),
+        })
         const response = await fetch(`/api/opportunity-detail?${params.toString()}`, { signal: controller.signal })
         if (!response.ok) {
           throw new Error('Failed to load details')
@@ -117,6 +121,7 @@ export function OpportunityDrawer({ open, opportunity, onClose, capital, leverag
   }
 
   function handleAlert() {
+    if (!opportunity) return
     window.dispatchEvent(
       new CustomEvent('fi-open-alert-composer', {
         detail: {

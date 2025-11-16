@@ -10,7 +10,7 @@ import type { Opportunity } from '@/types'
 const CHANNELS = [
   { value: 'email', label: 'Email' },
   { value: 'telegram', label: 'Telegram' },
-]
+] as const
 
 type Props = {
   opportunities: Opportunity[]

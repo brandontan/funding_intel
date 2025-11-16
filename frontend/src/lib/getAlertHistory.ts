@@ -11,12 +11,12 @@ type RawAlertEvent = {
   delivery_status: string
   message?: string | null
   created_at: string
-  alerts?: {
+  alerts?: Array<{
     user_id?: string
     pair?: string
     exchange?: string
     threshold_rate?: number
-  } | null
+  }> | null
 }
 
 export async function getAlertHistory(userId?: string): Promise<AlertHistoryEvent[]> {
@@ -41,15 +41,18 @@ export async function getAlertHistory(userId?: string): Promise<AlertHistoryEven
     return []
   }
 
-  return data.map((row: RawAlertEvent) => ({
-    id: row.id,
-    alertId: row.alert_id,
-    channel: row.channel,
-    deliveryStatus: row.delivery_status,
-    message: row.message ?? undefined,
-    pair: row.alerts?.pair ?? 'Unknown pair',
-    exchange: toExchangeLabel(row.alerts?.exchange ?? ''),
-    thresholdRate: Number(row.alerts?.threshold_rate ?? 0),
-    createdAt: row.created_at,
-  }))
+  return data.map((row: RawAlertEvent) => {
+    const related = Array.isArray(row.alerts) ? row.alerts[0] : null
+    return {
+      id: row.id,
+      alertId: row.alert_id,
+      channel: row.channel,
+      deliveryStatus: row.delivery_status,
+      message: row.message ?? undefined,
+      pair: related?.pair ?? 'Unknown pair',
+      exchange: toExchangeLabel(related?.exchange ?? ''),
+      thresholdRate: Number(related?.threshold_rate ?? 0),
+      createdAt: row.created_at,
+    }
+  })
 }
