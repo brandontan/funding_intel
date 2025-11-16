@@ -35,8 +35,18 @@ export function DeepAnalytics({ data }: Props) {
               <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
               <XAxis dataKey="exchange" className="text-xs text-muted-foreground" />
               <YAxis tickFormatter={formatPercent} className="text-xs text-muted-foreground" />
-              <Tooltip formatter={(value: number) => formatPercent(value)} labelClassName="text-xs" />
-              <Bar dataKey="avgRate" fill="url(#barGradient)" radius={[6, 6, 0, 0]} />
+              <Tooltip
+                formatter={(value: number) => formatPercent(value)}
+                labelClassName="text-xs"
+                contentStyle={{
+                  backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                  border: '1px solid rgba(148, 163, 184, 0.3)',
+                  borderRadius: '0.5rem',
+                  color: '#e2e8f0',
+                }}
+                cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }}
+              />
+              <Bar dataKey="avgRate" fill="url(#barGradient)" radius={[6, 6, 0, 0]} isAnimationActive={false} />
               <defs>
                 <linearGradient id="barGradient" x1="0" x2="0" y1="0" y2="1">
                   <stop offset="0%" stopColor="#22d3ee" />
