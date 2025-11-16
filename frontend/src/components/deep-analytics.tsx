@@ -20,6 +20,23 @@ type Props = {
 
 const formatPercent = (value: number) => `${(value * 100).toFixed(2)}%`
 
+type TooltipPayload = {
+  value: number
+}
+
+function YieldTooltip({ active, payload, label }: { active?: boolean; payload?: TooltipPayload[]; label?: string }) {
+  if (!active || !payload?.length) {
+    return null
+  }
+
+  return (
+    <div className="rounded-lg border border-white/10 bg-slate-900/95 px-3 py-2 text-xs text-slate-100 shadow-xl">
+      <div className="font-semibold capitalize">{label}</div>
+      <div className="text-sm text-primary">{formatPercent(payload[0]?.value ?? 0)}</div>
+    </div>
+  )
+}
+
 export function DeepAnalytics({ data }: Props) {
   const trend = data.pairTrends[0]
 
@@ -35,17 +52,7 @@ export function DeepAnalytics({ data }: Props) {
               <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
               <XAxis dataKey="exchange" className="text-xs text-muted-foreground" />
               <YAxis tickFormatter={formatPercent} className="text-xs text-muted-foreground" />
-              <Tooltip
-                formatter={(value: number) => formatPercent(value)}
-                labelClassName="text-xs"
-                contentStyle={{
-                  backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                  border: '1px solid rgba(148, 163, 184, 0.3)',
-                  borderRadius: '0.5rem',
-                  color: '#e2e8f0',
-                }}
-                cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }}
-              />
+              <Tooltip cursor={false} content={<YieldTooltip />} />
               <Bar dataKey="avgRate" fill="url(#barGradient)" radius={[6, 6, 0, 0]} isAnimationActive={false} />
               <defs>
                 <linearGradient id="barGradient" x1="0" x2="0" y1="0" y2="1">
