@@ -10,8 +10,10 @@ const proxyBase = process.env.HTX_PROXY_URL?.replace(/\/$/, '')
 const proxyKey = process.env.HTX_PROXY_KEY
 
 function buildUrl(path, params = {}) {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
   const base = proxyBase ?? 'https://api.hbdm.com'
-  const url = new URL(path, base)
+  const target = proxyBase ? `${base}${normalizedPath}` : undefined
+  const url = target ? new URL(target) : new URL(normalizedPath, base)
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       url.searchParams.set(key, value)
