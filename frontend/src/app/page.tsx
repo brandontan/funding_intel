@@ -10,6 +10,7 @@ import { getOpportunities } from '@/lib/getOpportunities'
 import { getUserSettings } from '@/lib/getUserSettings'
 import { getFundingAnalytics } from '@/lib/getFundingAnalytics'
 import { getAlertHistory } from '@/lib/getAlertHistory'
+import { getAlerts } from '@/lib/getAlerts'
 import { DEFAULT_EXCHANGE_VALUES } from '@/lib/exchanges'
 import { prioritizeOpportunities } from '@/lib/prioritizeOpportunities'
 import { DeepAnalytics } from '@/components/deep-analytics'
@@ -33,6 +34,7 @@ export default async function Page() {
   const prioritized = prioritizeOpportunities(opportunities, preferredExchanges)
   const hero = prioritized[0]
   const alertEvents = userSettings ? await getAlertHistory(userSettings.userId) : []
+  const alertRules = userSettings ? await getAlerts(userSettings.userId) : []
   const effectiveCapital = capital * leverage
   const heroData = hero
     ? {
@@ -75,7 +77,12 @@ export default async function Page() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <OnboardingFlow initialSettings={userSettings} defaultOpen={showOnboarding} />
+            <OnboardingFlow
+              initialSettings={userSettings}
+              defaultOpen={showOnboarding}
+              initialAlerts={alertRules}
+              alertEvents={alertEvents}
+            />
             <AlertComposer
               opportunities={opportunities}
               defaultChannel={userSettings?.alertChannel ?? 'email'}

@@ -92,6 +92,7 @@ export function AlertComposer({ opportunities, defaultChannel = 'email', userId,
       }
       setStatus('success')
       setNotice('')
+      window.dispatchEvent(new CustomEvent('fi-alert-created'))
       setTimeout(() => {
         setOpen(false)
         setStatus('idle')

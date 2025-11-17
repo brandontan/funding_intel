@@ -9,11 +9,14 @@ import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
 import { Badge } from '@/components/ui/badge'
 import { EXCHANGE_OPTIONS, DEFAULT_EXCHANGE_VALUES } from '@/lib/exchanges'
-import type { UserSettings } from '@/types'
+import { AlertManager } from '@/components/alert-manager'
+import type { AlertHistoryEvent, AlertRule, UserSettings } from '@/types'
 
 type Props = {
   initialSettings?: UserSettings | null
   defaultOpen?: boolean
+  initialAlerts?: AlertRule[]
+  alertEvents?: AlertHistoryEvent[]
 }
 
 const ALERT_CHANNELS = [
@@ -21,7 +24,7 @@ const ALERT_CHANNELS = [
   { value: 'telegram', label: 'Telegram' },
 ] as const
 
-export function OnboardingFlow({ initialSettings, defaultOpen = false }: Props) {
+export function OnboardingFlow({ initialSettings, defaultOpen = false, initialAlerts = [], alertEvents = [] }: Props) {
   const router = useRouter()
   const [open, setOpen] = useState(defaultOpen)
   const [capital, setCapital] = useState(initialSettings?.capitalDefault ?? 10000)
@@ -250,6 +253,9 @@ export function OnboardingFlow({ initialSettings, defaultOpen = false }: Props) 
                       </Button>
                     )}
                   </div>
+                </div>
+                <div className="rounded-2xl border border-border/30 bg-muted/20 p-4">
+                  <AlertManager initialAlerts={initialAlerts} userId={initialSettings?.userId} events={alertEvents} />
                 </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 <div className="flex flex-wrap items-center justify-between gap-3">
